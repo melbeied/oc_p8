@@ -1,0 +1,21 @@
+---
+- name : Installation Jenkind & PrestaShop
+  hosts: 127.0.0.1
+  connection : local 
+  #ansible_python_interpreter: /usr/bin/python
+  #user: admin
+  remote_user: vagrant
+  gather_facts: yes
+  become: yes 
+  vars_files:
+    - vars/main.yml
+
+  roles:
+    #- jenkins
+    - prestashop
+    #- selenium
+    #- geerlingguy.composer
+
+# todo : pass rds-mysql addree to ansible var file :
+# https://stackoverflow.com/questions/40353666/how-to-pass-terraform-outputs-variables-into-ansible-as-vars-files
+# https://github.com/mantl/terraform.py

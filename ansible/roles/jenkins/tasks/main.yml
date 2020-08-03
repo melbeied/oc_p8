@@ -1,0 +1,46 @@
+---
+# tasks file for jenkins
+- name: Install required software for Jenkins
+  apt: 
+    name:
+      - default-jre
+    
+    state : present
+  become: yes
+
+- name: Add Jenkins key
+  apt_key:
+    url: "https://pkg.jenkins.io/debian-stable/jenkins.io.key"
+    state: present
+
+- name: Add Jenkins repository
+  apt_repository:
+    repo: 'deb https://pkg.jenkins.io/debian-stable binary/'
+    state: present
+
+# - name: Install Jenkins binary package
+#   apt:
+#     name: "jenkins={{ jenkins_version }}"
+#     update_cache: true
+
+
+# - name : Enable Jenkins PPA 1/2
+#   shell : wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+
+# - name : Enable Jenkins PPA 2/2
+#   shell : sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+
+- name: Update apt cache 
+  apt: 
+    update_cache: yes 
+    cache_valid_time: 3600 
+  become: yes 
+
+- name: Install Jenkins
+  apt:
+    name :
+      - jenkins
+    state : present
+    update_cache: yes
+  become: yes
+  notify : Restart Jenkins

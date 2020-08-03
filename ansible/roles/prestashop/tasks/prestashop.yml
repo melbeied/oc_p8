@@ -1,0 +1,100 @@
+- name:  check work directory if exist [{{work_dir}}]
+  stat:
+    path: "{{work_dir}}/"
+  register: wfolder
+
+- name: remove files and directories
+  file:
+    state: "{{ item }}"
+    path: "{{work_dir}}/"
+    owner: 1000  # set your owner, group, and mode accordingly
+    group: 1000
+    mode: '0777'
+  with_items:
+    - absent
+    - directory
+  when: wfolder.stat.exists
+
+- name: "Ansible Create {{work_dir}}/resources/prestashop directory if not exists"
+  file:
+    path: "{{work_dir}}/resources/prestashop"
+    state: directory
+    mode: 0755
+    owner: "{{sys_user}}"
+    group: docker
+  #when: wfolder.stat.exists == false
+
+- name: "Ansible Create {{work_dir}}/src directory if not exists"
+  file:
+    path: "{{work_dir}}/src"
+    state: directory
+    mode: 0755
+    owner: "{{sys_user}}"
+    group: docker
+
+#TODO : GIT my repos
+- name: "Recuperation du souce git de prestashop : branche : {{prestashop_git_branch}}"
+  git:
+    repo: "{{prestashop_git_repo}}"
+    dest: "{{work_dir}}/src/"
+    version: "{{prestashop_git_branch}}"
+    depth: 50
+    force: "yes"
+    accept_hostkey: "yes"
+
+- name: suppression du dossier .git
+  shell: rm -rf {{work_dir}}/src/.git
+
+- name: Change the working directory to {{work_dir}}/src/ before init repo.
+  shell: git init && git add . && git commit -m "initial commit"
+  args:
+    chdir: "{{work_dir}}/src/"
+
+- name: "Create Dockerfile - prestashop"
+  template:
+    src: "prestashop-dockerfile.j2"
+    dest: "{{work_dir}}/resources/prestashop/Dockerfile"
+
+- name: "Ansible Create {{work_dir}}/resources/mysql directory if not exists"
+  file:
+    path: "{{work_dir}}/resources/mysql"
+    state: directory
+    mode: 0755
+    owner: "{{sys_user}}"
+    group: docker
+  #when: wfolder.stat.exists == false
+
+- name: "copy docker resource for prestashop"
+  copy:
+    src: "{{role_path}}/files/prestashop/*"
+    dest: "{{work_dir}}/resources/prestashop/"
+    owner: "{{sys_user}}"
+    group: docker
+    mode: u=rw,g=r,o=r
+  when: wfolder.stat.exists == false
+  
+- name: "Copy docker resource for mysql"
+  copy:
+    src: "{{role_path}}/files/mysql/"
+    dest: "{{work_dir}}/resources/mysql/"
+    owner: "{{sys_user}}"
+    group: docker
+    mode: u=rw,g=r,o=r    
+  when: wfolder.stat.exists == false
+
+- name: Create docker-compose.yml file
+  template:
+    src: "prestashop-git-docker-compose.yml.j2"
+    dest: "{{work_dir}}/docker-compose.yml"
+  when: wfolder.stat.exists == false
+
+- name: "change docker-compose.yml owner"
+  file:
+    path: "{{work_dir}}/docker-compose.yml"
+    state: file
+    mode: 0755
+    owner: "{{sys_user}}"
+    group: docker
+  when: wfolder.stat.exists == false
+
+

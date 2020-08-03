@@ -1,0 +1,14 @@
+
+# roles/prestashop/defaults/main.yml
+prestashop_directory: '/var/www/{{domain}}'
+httpd_configuration_dir : '/etc/apache2'
+prestashop_httpd_configuration: '/etc/apache2/sites-available/{{httpd_conf}}'
+prestashop_configuration: '/etc/prestashop/wp-config.php'
+
+prestashop_plugin_directory: "{{ prestashop_directory }}/wp-content/plugins"
+prestashop_theme_directory: "{{ prestashop_directory }}/wp-content/themes"
+
+app_user: www-data
+sys_user: vagrant
+
+installer : /tmp/composer-installer.php

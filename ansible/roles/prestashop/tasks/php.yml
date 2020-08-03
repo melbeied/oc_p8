@@ -1,0 +1,57 @@
+- name: Install required software for http web server
+  apt: 
+    name: 
+      - php{{ php_version }} 
+      - php{{ php_version }}-gd 
+      - php{{ php_version }}-mbstring 
+      - php{{ php_version }}-mysql 
+      - php{{ php_version }}-curl 
+      - php{{ php_version }}-xml
+      - php{{ php_version }}-cli 
+      - php{{ php_version }}-intl 
+      - php{{ php_version }}-zip 
+    state : present     
+  become: yes
+
+ 
+# curl -sSk https://getcomposer.org/installer -o /tmp/composer-installer.php
+- name: Download composer
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: "{{ installer }}"
+  tags:
+    - composer
+
+# php /tmp/composer-installer.php
+# sudo mv composer.phar /usr/local/bin/composer
+- name: Install composer
+  command: "{{ item }}"
+  with_items:
+    - "php {{ installer }}"
+    - mv composer.phar /usr/local/bin/composer
+  tags:
+    - composer
+
+# sudo rm /tmp/composer-installer.php
+- name: Remove composer installer
+  file:
+    path: "{{ installer }}"
+    state: absent
+  tags:
+    - composer
+
+- name: Print composer version
+  command: composer -v
+  register: version
+  
+
+# - debug: 
+#      verbosity : 4
+#      msg : version.stdout_lines
+
+
+- name: Set permissions on Composer
+  become: true
+  file:
+    path: /usr/local/bin/composer
+    mode: "a+x"

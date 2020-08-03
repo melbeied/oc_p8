@@ -1,0 +1,33 @@
+---
+# tasks file for webserver
+- name : install python-apt
+  apt :
+    name: python-apt
+    state: latest
+
+- name: Update apt cache 
+  apt: 
+    update_cache: yes 
+    cache_valid_time: 3600 
+  become: yes 
+
+
+- name: Include distribution-specific variables
+  include_vars: "{{ ansible_distribution }}.yml"
+  tags: system
+
+- name: Install Apache2
+  include_tasks: install.yml
+  tags: apache
+
+# - name: config httpd
+#   include_tasks: config.yml
+#   tags: apache
+
+- name: Install php lib extension
+  include_tasks: php.yml
+  tags: php
+
+- name: Install prestashop
+  include_tasks: prestashop.yml
+  tags: wordpress

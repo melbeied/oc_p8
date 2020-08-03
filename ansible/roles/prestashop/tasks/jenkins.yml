@@ -1,0 +1,43 @@
+---
+- name: Installation de Docker CE
+  hosts: all
+  gather_facts: yes
+  vars:
+    - username: vagrant
+  user: "{{username}}"
+  become: yes
+
+  tasks:
+  - name: Install required software for http web server
+    apt: 
+      name:
+        - default-jre
+      
+      state : present
+    become: yes
+
+  - name : Enable Jenkins PPA 1/2
+    command : wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+  
+  - name : Enable Jenkins PPA 2/2
+    command : sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+  
+  - name: Update apt cache 
+    apt: 
+      update_cache: yes 
+      cache_valid_time: 3600 
+    become: yes 
+  
+  - name: Install Jankins
+    apt:
+      name :
+        - jenkins
+      state : present
+    become: yes
+    notify : Restart Jenkis
+
+  handlers:
+  - name: Restart Jenkis
+    service:
+        name: jenkis
+        state: restarted

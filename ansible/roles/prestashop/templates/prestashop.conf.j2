@@ -1,0 +1,19 @@
+<VirtualHost *:80>
+     ServerAdmin admin@{{domain}}
+      DocumentRoot {{prestashop_directory}}
+     ServerName {{domain}}
+
+     <Directory {{prestashop_directory}}>
+          Options FollowSymlinks
+          AllowOverride All
+          Require all granted
+          ##Options FollowSymlinks
+          ##AllowOverride All
+          #AllowOverride Options
+          #Require all granted
+     </Directory>
+
+     ErrorLog ${APACHE_LOG_DIR}/{{domain}}_error.log
+     CustomLog ${APACHE_LOG_DIR}/{{domain}}_access.log combined
+
+</VirtualHost>
