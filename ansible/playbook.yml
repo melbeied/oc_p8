@@ -12,20 +12,21 @@
   # pre_tasks:
   #   - name : "PRE TACKS"
   #     shell: echo 'hello in pre'
+  
   roles:
-    # - jenkins
-    #- prestashop
+    - jenkins
+    - prestashop
     - selenium
     #- geerlingguy.composer
 
   tasks:
     - name : "execute : composer install --no-plugins"
       shell: composer install -d {{prestashop_src_dir}} --no-plugins
-      register: out
+    #   register: out
 
-    - name : show (composer install --no-plugins) output
-      debug: 
-        var: out.stdout_lines
+    # - name : show (composer install --no-plugins) output
+    #   debug: 
+    #     var: out.stdout_lines
 
   # post_tasks:
   #   - name : "POST TACKS"
