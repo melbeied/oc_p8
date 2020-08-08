@@ -1,12 +1,12 @@
-- name:  check work directory if exist [{{work_dir}}]
+- name:  check work directory if exist [{{workspace_dir}}]
   stat:
-    path: "{{work_dir}}/"
+    path: "{{workspace_dir}}/"
   register: wfolder
 
 - name: remove files and directories
   file:
     state: "{{ item }}"
-    path: "{{work_dir}}/"
+    path: "{{workspace_dir}}/"
     owner: 1000  # set your owner, group, and mode accordingly
     group: 1000
     mode: '0777'
@@ -16,9 +16,9 @@
   when: wfolder.stat.exists
 
 
-- name: "Ansible Create {{work_dir}}/src directory if not exists"
+- name: "Ansible Create {{prestashop_src_dir}} directory if not exists"
   file:
-    path: "{{work_dir}}/src"
+    path: "{{prestashop_src_dir}}"
     state: directory
     mode: 0755
     owner: "{{sys_user}}"
@@ -28,7 +28,7 @@
 - name: "Recuperation du souce github de prestashop : branche : {{prestashop_git_branch}}"
   git:
     repo: "{{prestashop_git_repo}}"
-    dest: "{{work_dir}}/src/"
+    dest: "{{prestashop_src_dir}}/"
     version: "{{prestashop_git_branch}}"
     depth: 50
     force: "yes"
@@ -36,18 +36,18 @@
 
 - name: suppression du dossier .git
   file :
-    path: "{{work_dir}}/src/.git"
+    path: "{{prestashop_src_dir}}/.git"
     state: absent
 
-- name: Change the working directory to {{work_dir}}/src/ before init repo.
+- name: Change the working directory to {{prestashop_src_dir}}/ before init repo.
   shell: git init && git add . && git commit -m "initial commit"
   args:
-    chdir: "{{work_dir}}/src/"
+    chdir: "{{prestashop_src_dir}}/"
 
 
-- name: Ansible Create {{work_dir}}/resources directory if not exists
+- name: Ansible Create {{workspace_dir}}/resources directory if not exists
   file:
-    path: "{{work_dir}}/resources"
+    path: "{{workspace_dir}}/resources"
     state: directory
     mode: 0755
     owner: "{{sys_user}}"
@@ -56,22 +56,22 @@
 - name: "copy docker resource for prestashop & mysql"
   copy:
     src: "{{role_path}}/files/"
-    dest: "{{work_dir}}/resources/"
+    dest: "{{workspace_dir}}/resources/"
     owner: "{{sys_user}}"
     group: docker
     mode: u=rw,g=r,o=r
 
 - name: chmod *.sh fille 0755   
-  command: find {{work_dir}}/resources -type f -name "*.sh" ! -perm 0755 -exec chmod 0755 {} \;
+  command: find {{workspace_dir}}/resources -type f -name "*.sh" ! -perm 0755 -exec chmod 0755 {} \;
   
 - name: Create docker-compose.yml file
   template:
     src: "prestashop-git-docker-compose.yml.j2"
-    dest: "{{work_dir}}/docker-compose.yml"
+    dest: "{{workspace_dir}}/docker-compose.yml"
 
 - name: "change docker-compose.yml owner"
   file:
-    path: "{{work_dir}}/docker-compose.yml"
+    path: "{{workspace_dir}}/docker-compose.yml"
     state: file
     mode: 0755
     owner: "{{sys_user}}"

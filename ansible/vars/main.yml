@@ -8,11 +8,14 @@ prestashop_git_branch : 1.7.7.x
 prestashop_git_repo: https://github.com/PrestaShop/PrestaShop.git
 docker_compose_version : 2
 tmp_dir : /tmp
-work_dir: ../project
-workspace_dir: /vagrant/project
+
+
+project_root_dir: "{{ playbook_dir }}/.."
+workspace_dir: "{{ project_root_dir }}/project"
 prestashop_src_dir: "{{workspace_dir}}/src"
 
 chrome_driver_path: /vagrant/project/webdriver
 chrome_version : 84.0.4147.30
 chrome_driver_url: https://chromedriver.storage.googleapis.com/index.html?path={{chrome_version}}/chromedriver_linux64.zip
+
 #https://chromedriver.storage.googleapis.com/84.0.4147.30/chromedriver_linux64.zip

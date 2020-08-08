@@ -1,9 +1,9 @@
 - name: "Create Dockerfile - prestashop"
   template:
     src: "Jenkinsfile.j2"
-    dest: "{{work_dir}}/src/Jenkinsfile"
+    dest: "{{prestashop_src_dir}}/Jenkinsfile"
 
-- name: Change the working directory to {{work_dir}}/src/ before init repo.
+- name: Change the working directory to {{prestashop_src_dir}}/ before init repo.
   shell: git add  && git add Jenkinsfile && git commit -m "Jenkinsfile add commit"
   args:
-    chdir: "{{work_dir}}/src/"
+    chdir: "{{prestashop_src_dir}}/"
