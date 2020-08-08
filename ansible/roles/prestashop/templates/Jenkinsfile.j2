@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+    environment {
+        SRC_DIR = '{{prestashop_src_dir}}'
+        WORKSPACE_DIR = '{{workspace_dir}}'
+    }
+    stages {
+        stage('pre-build') {
+            steps {
+                echo "Etape de pré-build!"
+                sh '''#!/bin/bash
+                      cd "\${SRC_DIR}"
+                      export SYMFONY_DEPRECATIONS_HELPER=weak
+                      php -d date.timezone=UTC ./vendor/bin/phpunit -c tests/Unit/phpunit.xml ; exit 0
+                   '''
+            }
+        }
+        stage('build') {
+            steps {
+                echo "Etape de build!"
+                sh '''#!/bin/bash
+                      cd "\${WORKSPACE_DIR}"
+                      docker-compose build
+                      docker-compose up -d && sleep 10
+                   '''
+            }
+        }
+        stage('tests') {
+            steps {
+                echo "Etape de lancement des tests!"
+                sh "python prestashop_test.py"
+                publishHTML (target : [allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'reports',
+                    reportFiles: 'Rapport*',
+                    reportName: 'PrestaShopTestReport',
+                    reportTitles: 'Test Report'])
+            }
+        }
+        stage('visualisation') {
+            steps {
+                echo "verify generated reports"
+            }
+        }
+    }
+}

@@ -104,3 +104,16 @@
   service: name=selenium state=started enabled=yes
   tags: [configuration, selenium, selenium-run]
   when: selenium_running.failed is defined and selenium_running.failed == true
+
+###########
+- name: Install libselinux-python
+  yum:
+    name: libselinux-python
+    state: present
+  when: ansible_os_family == 'RedHat'
+
+- name: Install python-selinux
+  apt:
+    name: python-selinux
+    state: present
+  when: ansible_os_family == 'Debian'

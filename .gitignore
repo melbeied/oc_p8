@@ -3,3 +3,6 @@ ansible/vars.yml
 tools.md
 .vagrant
 project/
+
+.DS_Store
+ansible/playbook.retry

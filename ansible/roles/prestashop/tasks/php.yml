@@ -33,7 +33,7 @@
     - composer
 
 # sudo rm /tmp/composer-installer.php
-- name: Remove composer installer
+- name: Remove composer installer from tmp
   file:
     path: "{{ installer }}"
     state: absent

@@ -30,4 +30,8 @@
 
 - name: Install prestashop
   include_tasks: prestashop.yml
-  tags: wordpress
+  tags: prestashop
+
+- name: "complete action : JenkinsFile add to src folder"
+  include_tasks: post_actions.yml
+  tags: Jenkins

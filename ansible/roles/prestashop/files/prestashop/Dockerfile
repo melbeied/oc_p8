@@ -1,5 +1,4 @@
 FROM prestashop/prestashop-git:latest
-#source : https://github.com/PrestaShop/docker-ci/blob/master/7.3/
 RUN apt-get update -y
 RUN apt-get install -y vim
 

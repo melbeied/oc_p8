@@ -17,8 +17,7 @@ Vagrant.configure("2") do |config|
       v.memory = 4096
     end
     
-    #config.vm.synced_folder '.', '/vagrant', type: "rsync", rsync__exclude: ".vagrant/"
-    config.vm.synced_folder '.', '/vagrant', type: "virtualbox", rsync__exclude: ".vagrant/"
+    config.vm.synced_folder '.', '/vagrant', type: "virtualbox"
     config.vm.provision :shell, path: "VagrantExt/ansible.sh"
     config.vm.provision :shell, inline: "export ANSIBLE_HOST_KEY_CHECKING=False"
     config.vm.provision 'ansible' do |ansible|
