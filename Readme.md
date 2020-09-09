@@ -6,6 +6,6 @@
 ## Reference
   
    ### instructions to install Selenium on Debian dist with ChromeDriver
-  [packaging.ython.org](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
+  [packaging.python.org](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
 
   
