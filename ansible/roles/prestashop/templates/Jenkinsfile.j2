@@ -3,6 +3,7 @@ pipeline {
     environment {
         SRC_DIR = '{{prestashop_src_dir}}'
         WORKSPACE_DIR = '{{workspace_dir}}'
+        PY_SCRIPTS_DIR = '{{python_scripts_dir}}'
     }
     stages {
         stage('pre-build') {
@@ -28,7 +29,17 @@ pipeline {
         stage('tests') {
             steps {
                 echo "Etape de lancement des tests!"
-                sh "python prestashop_test.py"
+                sh '''#!/bin/bash
+                      cd "\${PY_SCRIPTS_DIR}"
+                      #todo : set up virtualenv
+                      # . selenium/bin/activate
+                      python user_signup.py
+                   '''               
+            }
+        }
+        stage('visualisation') {
+            steps {
+                echo "verify generated reports"
                 publishHTML (target : [allowMissing: false,
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
@@ -36,11 +47,6 @@ pipeline {
                     reportFiles: 'Rapport*',
                     reportName: 'PrestaShopTestReport',
                     reportTitles: 'Test Report'])
-            }
-        }
-        stage('visualisation') {
-            steps {
-                echo "verify generated reports"
             }
         }
     }

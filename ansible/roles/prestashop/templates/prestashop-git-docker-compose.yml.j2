@@ -12,8 +12,6 @@ services:
       frontend:
     ports:
       - "82:80"
-    links:
-      - mysql:mysql
     depends_on:
       - mysql
     volumes:

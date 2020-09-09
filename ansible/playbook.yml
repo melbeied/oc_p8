@@ -10,24 +10,60 @@
     - vars.yml
   
   # pre_tasks:
-  #   - name : "PRE TACKS"
-  #     shell: echo 'hello in pre'
+  #   # - name : "PRE TACKS"
+  #   #   shell: echo 'hello in pre'
+  #   # - name: "Recuperation du souce github de prestashop : branche : {{prestashop_git_branch}}"
+  #   #   git:
+  #   #     repo: "{{prestashop_git_repo}}"
+  #   #     dest: "/vagrant/toto/"
+  #   #     version: "{{prestashop_git_branch}}"
+  #   #     depth: 50
+  #   #     force: "yes"
+  #   #     accept_hostkey: "yes"
   
-  roles:
-    - jenkins
-    - prestashop
-    - selenium
-    #- geerlingguy.composer
+  # roles:
+  #   - jenkins
+  #   - prestashop
+  #   - selenium
+  #   - geerlingguy.composer
 
-  tasks:
-    - name : "execute : composer install --no-plugins"
-      shell: composer install -d {{prestashop_src_dir}} --no-plugins
-    #   register: out
+  # tasks:
+  #   - name : "execute : composer install --no-plugins"
+  #     shell: composer install -d {{prestashop_src_dir}} --no-plugins
 
-    # - name : show (composer install --no-plugins) output
-    #   debug: 
-    #     var: out.stdout_lines
 
-  # post_tasks:
-  #   - name : "POST TACKS"
-  #     shell: echo 'goodbye in post'
+  post_tasks:
+    - name: adding  user '{{ jenkins_user }}' to {{ docker_group }} group 
+      user:
+        name: "{{ jenkins_user }}"
+        groups: ["{{ docker_group }}"]
+        append: yes
+    
+    # - name: sudo without password for {{ jenkins_user }} group
+    #   copy:
+    #     content: '%{{ jenkins_user }} ALL=(ALL:ALL) NOPASSWD:ALL'
+    #     dest: /etc/sudoers.d/{{ jenkins_user }}_nopasswd
+    #     mode: 0440
+
+    - name: Add {{ jenkins_user }} user to sudoers file
+      lineinfile:
+        path: /etc/sudoers
+        regexp: '^{{ jenkins_user }}'
+        line: '{{ jenkins_user }} ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    # - name : install virtualenv  
+    #   pip:
+    #     name=virtualenv
+    #     version="{{ virtualenv_version }}"
+    #     state=present
+    #   become: yes
+
+
+    # - name: create acceptance scripts folder
+    #   file :
+    #     state: "present"
+    #     path : "{{virtualenv_dir}}"
+    #     mode: 0755
+    #     owner: "{{sys_user}}"
+    #     group: "{{sys_user}}"

@@ -1,4 +1,7 @@
 jenkins_version : 2.244
+jenkins_user: jenkins
+docker_user: docker
+docker_group: docker
 
 domain: ps.melbeied.net
 httpd_conf : prestashop.conf
@@ -13,9 +16,13 @@ tmp_dir : /tmp
 project_root_dir: "{{ playbook_dir }}/.."
 workspace_dir: "{{ project_root_dir }}/project"
 prestashop_src_dir: "{{workspace_dir}}/src"
-
+python_scripts_dir: "{{workspace_dir}}/scripts"
+virtualenv_dir: "{{workspace_dir}}/acceptance"
 chrome_driver_path: /vagrant/project/webdriver
 chrome_version : 84.0.4147.30
 chrome_driver_url: https://chromedriver.storage.googleapis.com/index.html?path={{chrome_version}}/chromedriver_linux64.zip
 
 #https://chromedriver.storage.googleapis.com/84.0.4147.30/chromedriver_linux64.zip
+
+
+virtualenv_version: 20.0.30

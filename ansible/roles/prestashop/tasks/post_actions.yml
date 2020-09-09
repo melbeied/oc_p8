@@ -1,4 +1,4 @@
-- name: "Create Dockerfile - prestashop"
+- name: "subtitute and Create Jenkinsfile "
   template:
     src: "Jenkinsfile.j2"
     dest: "{{prestashop_src_dir}}/Jenkinsfile"
@@ -7,3 +7,4 @@
   shell: git add  && git add Jenkinsfile && git commit -m "Jenkinsfile add commit"
   args:
     chdir: "{{prestashop_src_dir}}/"
+

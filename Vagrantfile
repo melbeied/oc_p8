@@ -14,8 +14,9 @@ Vagrant.configure("2") do |config|
     
     config.vm.provider "virtualbox" do |v|
       v.cpus = 4
-      v.memory = 4096
+      v.memory = 5096
     end
+ 
     
     config.vm.synced_folder '.', '/vagrant', type: "virtualbox"
     config.vm.provision :shell, path: "VagrantExt/ansible.sh"
@@ -26,6 +27,4 @@ Vagrant.configure("2") do |config|
         ansible.become = true
     end
   end
-
-
   #vagrant plugin install vagrant-vbguest

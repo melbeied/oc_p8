@@ -53,10 +53,26 @@
     owner: "{{sys_user}}"
     group: docker
 
+- name: Ansible Create {{workspace_dir}}/scripts directory if not exists
+  file:
+    path: "{{workspace_dir}}/scripts"
+    state: directory
+    mode: 0755
+    owner: "{{sys_user}}"
+    group: docker
+
 - name: "copy docker resource for prestashop & mysql"
   copy:
-    src: "{{role_path}}/files/"
+    src: "{{role_path}}/files/resources/"
     dest: "{{workspace_dir}}/resources/"
+    owner: "{{sys_user}}"
+    group: docker
+    mode: u=rw,g=r,o=r
+
+- name: "copy pythons scripts files "
+  copy:
+    src: "{{role_path}}/files/scripts/"
+    dest: "{{workspace_dir}}/scripts/"
     owner: "{{sys_user}}"
     group: docker
     mode: u=rw,g=r,o=r
