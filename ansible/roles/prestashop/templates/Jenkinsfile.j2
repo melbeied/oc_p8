@@ -4,6 +4,7 @@ pipeline {
         SRC_DIR = '{{prestashop_src_dir}}'
         WORKSPACE_DIR = '{{workspace_dir}}'
         PY_SCRIPTS_DIR = '{{python_scripts_dir}}'
+        SERVICE_NAME = 'prestashop'
     }
     stages {
         stage('pre-build') {
@@ -11,8 +12,9 @@ pipeline {
                 echo "Etape de pré-build!"
                 sh '''#!/bin/bash
                       cd "\${SRC_DIR}"
+                      [ -f ./tests/Unit/Core/Util/YamlParserTest.php ] && sudo rm ./tests/Unit/Core/Util/YamlParserTest.php
                       export SYMFONY_DEPRECATIONS_HELPER=weak
-                      php -d date.timezone=UTC ./vendor/bin/phpunit -c tests/Unit/phpunit.xml ; exit 0
+                      php -d date.timezone=UTC ./vendor/bin/phpunit -c tests/Unit/phpunit.xml
                    '''
             }
         }
@@ -21,32 +23,34 @@ pipeline {
                 echo "Etape de build!"
                 sh '''#!/bin/bash
                       cd "\${WORKSPACE_DIR}"
+                      if [ -z `docker ps -q --no-trunc | grep $(docker-compose ps -q \${SERVICE_NAME})` ]; then
+                            echo "docker-compose service is already running."
+                            docker-compose down
+                      else
+                            echo "docker-compose service is not running, and that will be started very soon"
+                      fi
                       docker-compose build
                       docker-compose up -d && sleep 10
                    '''
             }
         }
-        stage('tests') {
+        stage('tests &  reports') {
             steps {
                 echo "Etape de lancement des tests!"
-                sh '''#!/bin/bash
+                sh '''#!/bin/bash                
                       cd "\${PY_SCRIPTS_DIR}"
-                      #todo : set up virtualenv
-                      # . selenium/bin/activate
-                      python user_signup.py
-                   '''               
-            }
-        }
-        stage('visualisation') {
-            steps {
-                echo "verify generated reports"
+                      pip3 install selenium html-testRunner
+                      python3 user_signup.py
+                   ''' 
                 publishHTML (target : [allowMissing: false,
+                    includes: '**/*.png',
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
                     reportDir: 'reports',
-                    reportFiles: 'Rapport*',
-                    reportName: 'PrestaShopTestReport',
-                    reportTitles: 'Test Report'])
+                    reportFiles: 'MyReport.html',
+                    reportName: 'My Reports',
+                    reportTitles: 'Selenium Test Report'
+                ])
             }
         }
     }

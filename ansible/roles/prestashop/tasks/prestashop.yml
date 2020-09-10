@@ -75,7 +75,7 @@
     dest: "{{workspace_dir}}/scripts/"
     owner: "{{sys_user}}"
     group: docker
-    mode: u=rw,g=r,o=r
+    mode: u=rw,g=wr,o=wr
 
 - name: chmod *.sh fille 0755   
   command: find {{workspace_dir}}/resources -type f -name "*.sh" ! -perm 0755 -exec chmod 0755 {} \;
